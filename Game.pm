@@ -25,12 +25,18 @@ use T_Mino;
 
 use Data::Dumper;
 
+=comment
+Game state constants
+=cut
 use constant {
         RUNNING   => 'running',
         PAUSED   => 'paused',
         OVER   => 'over',
 };
 
+=comment
+The game current state.
+=cut
 enum 'valid_state', [&RUNNING, &PAUSED, &OVER];
 has state => (
     is => 'rw',
@@ -40,6 +46,9 @@ has state => (
     builder => '_build_state',
 );
 
+=comment
+The cells of the board.
+=cut
 has cells => (
     is => 'bare',
     isa => 'ArrayRef[ArrayRef[Block]]',
@@ -48,6 +57,9 @@ has cells => (
     builder => '_build_cells',
 );
 
+=comment
+The current mino.
+=cut
 has current_mino => (
     is => 'rw',
     isa => 'Mino',
@@ -56,6 +68,9 @@ has current_mino => (
 );
 after 'set_current_mino'  => \&fill_mino_blocks;
 
+=comment
+Current game score.
+=cut
 has score => (
     is => 'ro',
     isa => 'Int',
@@ -63,6 +78,9 @@ has score => (
     builder => '_build_score',
 );
 
+=comment
+Timer which triggers the tick function
+=cut
 has _ticker => (
     is => 'bare',
     isa => 'Wx::Timer',
@@ -70,18 +88,27 @@ has _ticker => (
     builder => '_build_ticker',
 );
 
+=comment
+Reference to the score panel. (GUI)
+=cut
 has score_panel => (
     is => 'ro',
     isa => 'Score_Panel',
     required => 1,
 );
 
+=comment
+Reference to the board panel. (GUI)
+=cut
 has board_panel => (
     is => 'ro',
     isa => 'Board_Panel',
     required => 1,
 );
 
+=comment
+Reference to the application.
+=cut
 has app => (
     is => 'bare',
     isa => 'Wx::App',
@@ -119,6 +146,9 @@ sub BUILD () {
     EVT_KEY_DOWN($self, \&Game::process_keypress);
 }
 
+=comment
+Moves the current mino down one line.
+=cut
 sub tick () {
     my $self = shift;
     my $event = shift;
@@ -144,6 +174,9 @@ sub tick () {
     $self->board_panel->Refresh();
 }
 
+=comment
+Used to process the keyboard input.
+=cut
 sub process_keypress {
     my $panel = shift;
     my $self = $panel->game;
@@ -197,6 +230,9 @@ sub process_keypress {
     $self->board_panel->Refresh();
 }
 
+=comment
+Clears the rows which are fully stacked.
+=cut
 sub clear_stacked_rows () {
     my $self = shift;
     my @cells = @{$self->_get_cells};
@@ -241,6 +277,9 @@ sub clear_stacked_rows () {
     $self->_increment_score($cleared_rows);
 }
 
+=comment
+Increments the score based on the number of rows cleared.
+=cut
 sub _increment_score ($) {
     my ($self, $rows) = @_;
     my $score = $self->score;
@@ -256,6 +295,9 @@ sub _increment_score ($) {
     $self->score_panel->set_score($score);
 }
 
+=comment
+Stacks the current mino.
+=cut
 sub stack_current_mino () {
     my $self = shift;
     my @cells = @{$self->_get_cells};
@@ -267,6 +309,9 @@ sub stack_current_mino () {
     }
 }
 
+=comment
+Checks if the move is valid.
+=cut
 sub move_is_valid () {
     my $self = shift;
     my @cells = @{$self->_get_cells};
@@ -310,6 +355,9 @@ sub _build_cells () {
     return \@cells;
 }
 
+=comment
+Generates a random mino.
+=cut
 sub generate_mino () {
     my @minos = (
         sub{L_Mino->new(x => 5, y => 1)},
@@ -324,6 +372,9 @@ sub generate_mino () {
     $minos[rand scalar @minos]->();
 }
 
+=comment
+Unfills the mino blocks.
+=cut
 sub clear_mino_blocks () {
     my $self = shift;
     
@@ -337,7 +388,9 @@ sub clear_mino_blocks () {
     }
 }
 
-#
+=comment
+Fills the mino blocks.
+=cut
 sub fill_mino_blocks () {
     my $self = shift;
     
@@ -351,6 +404,9 @@ sub fill_mino_blocks () {
     }
 }
 
+=comment
+Clears the board.
+=cut
 sub clear_cells () {
     my $self = shift;
     my @cells = @{$self->_get_cells};
@@ -364,6 +420,9 @@ sub clear_cells () {
     }
 }
 
+=comment
+Starts the game.
+=cut
 sub start {
     my $self = shift;
     my $ticker = $self->_ticker;
@@ -382,6 +441,9 @@ sub start {
     $ticker->Start(1000);
 }
 
+=comment
+Pauses/Unpauses the game.
+=cut
 sub pause {
     my $self = shift;
     my $state = $self->state;
@@ -395,6 +457,9 @@ sub pause {
     }
 }
 
+=comment
+Stops the game.
+=cut
 sub game_over {
     my $self = shift;
     my $ticker = $self->_ticker;

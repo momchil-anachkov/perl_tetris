@@ -10,6 +10,9 @@ extends qw(Wx::Panel);
 use Data::Dumper;
 use Wx;
 
+=comment
+Reference to the current game.
+=cut
 has game => (
     is => 'rw',
     isa => 'Game',
@@ -17,6 +20,9 @@ has game => (
 	writer => 'set_game',
 );
 
+=comment
+Score value for the label.
+=cut
 has score => (
 	is => 'ro',
 	isa => 'Int',
@@ -24,6 +30,9 @@ has score => (
 	builder => '_build_score',
 );
 
+=comment
+Label for the score.
+=cut
 has label => (
 	is => 'bare',
 	isa => 'Wx::StaticText',
@@ -36,6 +45,11 @@ sub _build_score () {
 	return 0;
 }
 
+=comment
+Initializes the label after creation.
+Note: The class members cannot be set if the panel is not created
+with a concrete constructor or the 'create' method.
+=cut
 sub _init () {
 	my $self = shift;
 	my $score = $self->score;
@@ -55,14 +69,9 @@ sub _init () {
 	}
 }
 
-#sub BUILD () {
-#    my $self = shift;
-#    
-#    $self->SetBackgroundColour(Wx::Colour->new(255,255,255));
-#    $self->Refresh();
-#    $self->SetBackgroundStyle(&Wx::wxBG_STYLE_CUSTOM);
-#}
-
+=comment
+Sets the score value and updates the score label.
+=cut
 sub set_score ($) {
 	my ($self, $score) = @_;
 	

@@ -12,6 +12,9 @@ use Game;
 use Board_Panel;
 use Score_Panel;
 
+=comment
+Reference to the current game.
+=cut
 has game => (
     is => 'rw',
     isa => 'Game',
@@ -28,6 +31,9 @@ sub BUILD () {
     EVT_MENU($self, 3, \&stop);
 }
 
+=comment
+Fires on Start press in the menu.
+=cut
 sub start () {
     my $self = shift;
     my $evt = shift;
@@ -36,6 +42,9 @@ sub start () {
     $self->game->start;
 }
 
+=comment
+Fires on Pause press in the menu.
+=cut
 sub pause () {
     my $self = shift;
     my $evt = shift;
@@ -44,6 +53,9 @@ sub pause () {
     $self->game->pause;
 }
 
+=comment
+Fires on Stop press in the menu.
+=cut
 sub stop () {
     my $self = shift;
     my $evt = shift;
@@ -52,6 +64,9 @@ sub stop () {
     $self->game->game_over;
 }
 
+=comment
+Enables or disables the menu items for the frame in the order given.
+=cut
 sub enable_menu_items ($$$) {
     my ($self, $start_enabled, $pause_enabled, $stop_enabled) = @_;
     

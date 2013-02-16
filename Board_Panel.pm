@@ -12,22 +12,15 @@ use Data::Dumper;
 use Colors;
 extends qw(Wx::Panel);
 
+=comment
+Reference to the current game.
+=cut
 has game => (
     is => 'rw',
     isa => 'Game',
     reader => 'game',
 	writer => 'set_game',
 );
-
-sub FOREIGNBUILDARGS {    
-    shift;
-
-    #Pop the last pair of arguments (The game hash pair)
-    pop;
-    pop;
-    
-    @_;
-}
 
 sub BUILD () {
     my $self = shift;
@@ -40,6 +33,9 @@ sub BUILD () {
     EVT_KEY_DOWN($self, \&Game::process_keypress);
 }
 
+=comment
+Used to paint the board.
+=cut
 sub paint {
     my $self = shift;
     my $dc = Wx::BufferedPaintDC->newWindow($self);

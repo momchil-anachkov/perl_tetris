@@ -3,6 +3,9 @@ use Moose;
 use Wx;
 use Colors;
 
+=comment
+Boolean flag indicating whether the block is filled (with a mino).
+=cut
 has filled => (
     is => 'ro',
     isa => 'Bool',
@@ -11,6 +14,9 @@ has filled => (
     builder => '_build_filled',
 );
 
+=comment
+Boolean flag indicating whether the block is stacked (part of the board stack).
+=cut
 has stacked => (
     is => 'rw',
     isa => 'Bool',
@@ -19,6 +25,9 @@ has stacked => (
     builder => '_build_stacked'
 );
 
+=comment
+The color of the block.
+=cut
 has color => (
     is => 'ro',
     isa => 'Wx::Colour',
@@ -38,6 +47,9 @@ sub _build_color () {
     return Wx::Colour->new(&Colors::block_default);
 }
 
+=comment
+Fills the block and sets its color to the one of the passed mino.
+=cut
 sub fill {
     my ($self, $filling, $mino) = @_;
     
