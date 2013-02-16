@@ -33,4 +33,8 @@ sub _init_rot_positions () {
     ];
 }
 
+sub _build_color () {
+    Wx::Colour->new(&Colors::z_mino);
+}
+
 1;

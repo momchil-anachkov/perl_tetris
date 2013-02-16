@@ -7,21 +7,22 @@ use Wx;
 use Moose;
 use MooseX::NonMoose;
 use Sizes;
-use Wx::Event qw(EVT_PAINT EVT_KEY_UP);
+use Wx::Event qw(EVT_PAINT EVT_KEY_UP EVT_KEY_DOWN);
 use Data::Dumper;
+use Colors;
 extends qw(Wx::Panel);
 
 has game => (
-    is => 'bare',
+    is => 'rw',
     isa => 'Game',
-    reader => '_game',
-    required => 1,
+    reader => 'game',
+	writer => 'set_game',
 );
 
 sub FOREIGNBUILDARGS {    
     shift;
 
-    #pop the last pair of arguments
+    #Pop the last pair of arguments (The game hash pair)
     pop;
     pop;
     
@@ -36,38 +37,30 @@ sub BUILD () {
     $self->SetBackgroundStyle(&Wx::wxBG_STYLE_CUSTOM);
     
     EVT_PAINT($self, \&paint);
-    EVT_KEY_UP($self, \&on_key_release);
-}
-
-sub on_key_release {
-    my $self = shift;
-    my $evt = shift;
-    
-    print 'Works!';
+    EVT_KEY_DOWN($self, \&Game::process_keypress);
 }
 
 sub paint {
     my $self = shift;
     my $dc = Wx::BufferedPaintDC->newWindow($self);
-    #my $dc = Wx::PaintDC->new($self);
-    
-    #Draw some meaningless background.
-    $dc->SetBrush(&Wx::wxWHITE_BRUSH);
-    $dc->DrawRectangle( 0, 0, 3000, 3000 );
-    
-    my $cells = $self->_game->get_cells();
 
-    $dc->SetBrush(&Wx::wxBLUE_BRUSH);
-    $dc->SetPen( Wx::Pen->new( Wx::Colour->new( 100, 100, 100 ), &Sizes::border_size, &Wx::wxSOLID) );
+    $dc->Clear;
+    
+    my @cells = $self->game->get_cells();
+
+    #$dc->SetBrush(&Wx::wxBLUE_BRUSH);
+
+    $dc->SetBrush(Wx::Brush->new(Wx::Colour->new( &Colors::block_default ), -1));    
+    $dc->SetPen( Wx::Pen->new( Wx::Colour->new( &Colors::pen ), &Sizes::border_size, &Wx::wxSOLID) );
     
     my $block_size = &Sizes::block_size;
     my ($start_point_x, $start_point_y) = $self->GetSizeWH();
     
     for my $i (0..19) {
         for my $j (0..9) {
-            $dc->SetBrush(&Wx::wxRED_BRUSH) if ($cells->[$j][$i]->is_filled);
-            $dc->DrawRectangle( $start_point_x/4 + $block_size*$j, $start_point_y/33 + $block_size*$i, $block_size, $block_size );
-            $dc->SetBrush(&Wx::wxBLUE_BRUSH);
+            $dc->SetBrush(Wx::Brush->new($cells[$i][$j]->color , -1)) if ($cells[$i][$j]->is_filled || $cells[$i][$j]->is_stacked);
+            $dc->DrawRectangle( $start_point_x/17 + $block_size*$j, $start_point_y/37 + $block_size*$i, $block_size, $block_size );
+            $dc->SetBrush(Wx::Brush->new(Wx::Colour->new( &Colors::block_default ), -1));
         }
     }
 }

@@ -15,7 +15,15 @@ sub _init_rot_positions () {
     ];
 }
 
-sub rotate () {
+sub _build_color () {
+    Wx::Colour->new(&Colors::o_mino);
+}
+
+sub rotate_c () {
+    return 0;
+}
+
+sub rotate_cc () {
     return 0;
 }
 
